@@ -47,18 +47,38 @@
       // call child data = data......this is new train data from database
       var data = childSnapshot.val();
     
+      
+      // Calculate arrival time and minutes to arrival--------------
+
+      //Min to First train:  
+      //current in mins - first train time in mins
+      var First = data.trainFirstTime;
+      var convertedFirst = moment(First,"hh:mm").subtract(1,"years");
+          
+      //minutes between now and first
+      var minNowToFirst = moment().diff(moment(convertedFirst), "minutes");
+
+      console.log(minNowToFirst);
+  
+      var minremaining = minNowToFirst%data.trainFreq; //remainder
+      var minTillNext = data.trainFreq - minremaining; 
+      console.log("MINUTES TILL TRAIN: " + minTillNext);
+      var nextTrain = moment().add(minTillNext,"minutes");
+      var arrivalTime = moment(nextTrain).format("hh:mm");
+    //--------------------------------------------------------------
+
+
       // generate parts of new train data ....table elements
-       console.log(childSnapshot.val());
-    var newTrTrain = $('<tr>');
-    var newTdName = $('<td>').text(data.trainName);
-    var newTdDest = $('<td>').text(data.trainDest);
-    var newTdFirst = $('<td>').text(data.trainFirstTime);
-    var newTdMinToArr = $('<td>').text('TBD');
-    var newTdFreq = $('<td>').text(data.trainFreq);
-    var newTdNext = $('<td>').text('TBD');
+      console.log(childSnapshot.val());
+      var newTrTrain = $('<tr>');
+      var newTdName = $('<td>').text(data.trainName);
+      var newTdDest = $('<td>').text(data.trainDest);
+      var newTdFreq = $('<td>').text(data.trainFreq);
+      var newTdNext = $('<td>').text(minTillNext);
+      var newTdMinToArr = $('<td>').text(arrivalTime);
 
     // add table cells(<td> tags) to table row (<tr> tab)
-    newTrTrain.append(newTdName, newTdDest, newTdFirst, newTdMinToArr, newTdFreq, newTdNext);
+    newTrTrain.append(newTdName, newTdDest, newTdFreq, newTdNext, newTdMinToArr, );
     
     // now Write html to page appending it to tbody tag
     $('tbody').append(newTrTrain);
@@ -66,3 +86,9 @@
     }
 
     });
+
+    
+    
+    
+    //Next train time:
+    //convert first train time to min....add freq mins ....convert back to military = next

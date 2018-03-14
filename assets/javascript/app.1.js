@@ -13,7 +13,7 @@
   var database = firebase.database();
 
 
-  // event-listener:  get user form data
+  // event-listener:  get user data
   $('#addTrain').on('click', function(){
 
     // Prevent the page from reloading
@@ -25,6 +25,7 @@
     var first = $('#train-FirstTime').val().trim();
     var freq = $('#train-Freq').val().trim();
 
+    console.log (name, dest, first, freq);
     //if all data fields are filled in then push user data to database
     if (name != "" && dest != "" && first != "" && freq != ""){        database.ref().push({   
         trainName: name,
@@ -55,10 +56,12 @@
           
         //minutes between now and first
         var minNowToFirst = moment().diff(moment(convertedFirst), "minutes");  
+        console.log(minNowToFirst);
       
         // find remainder of min/freq --- this is how many min left
         var minremaining = minNowToFirst%data.trainFreq;
         var minTillNext = data.trainFreq - minremaining; 
+        console.log("MINUTES TILL TRAIN: " + minTillNext);
       
         // add min remaining to current time 
         var nextTrain = moment().add(minTillNext,"minutes");
@@ -67,6 +70,7 @@
 
 
       // generate parts of new train data ....new table row
+      console.log(childSnapshot.val());
       var newTrTrain = $('<tr>');
       var newTdName = $('<td>').text(data.trainName);
       var newTdDest = $('<td>').text(data.trainDest);

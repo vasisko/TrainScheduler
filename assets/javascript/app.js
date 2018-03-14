@@ -26,8 +26,8 @@
     var freq = $('#train-Freq').val().trim();
 
     console.log (name, dest, first, freq);
-
-    if (name != "" && dest != "" && first != "" && freq != ""){        database.ref().push({  //push values to database using key 
+    //if all data fields are filled in then push user data to database
+    if (name != "" && dest != "" && first != "" && freq != ""){        database.ref().push({   
         trainName: name,
         trainDest: dest,
         trainFirstTime: first,
@@ -49,46 +49,41 @@
     
       
       // Calculate arrival time and minutes to arrival--------------
-
-      //Min to First train:  
-      //current in mins - first train time in mins
-      var First = data.trainFirstTime;
-      var convertedFirst = moment(First,"hh:mm").subtract(1,"years");
+        // Min to First train:  
+        // current in mins - first train time in mins
+        var First = data.trainFirstTime;
+        var convertedFirst = moment(First,"hh:mm").subtract(1,"years");
           
-      //minutes between now and first
-      var minNowToFirst = moment().diff(moment(convertedFirst), "minutes");
-
-      console.log(minNowToFirst);
-  
-      var minremaining = minNowToFirst%data.trainFreq; //remainder
-      var minTillNext = data.trainFreq - minremaining; 
-      console.log("MINUTES TILL TRAIN: " + minTillNext);
-      var nextTrain = moment().add(minTillNext,"minutes");
-      var arrivalTime = moment(nextTrain).format("hh:mm");
+        //minutes between now and first
+        var minNowToFirst = moment().diff(moment(convertedFirst), "minutes");  
+        console.log(minNowToFirst);
+      
+        // find remainder of min/freq --- this is how many min left
+        var minremaining = minNowToFirst%data.trainFreq;
+        var minTillNext = data.trainFreq - minremaining; 
+        console.log("MINUTES TILL TRAIN: " + minTillNext);
+      
+        // add min remaining to current time 
+        var nextTrain = moment().add(minTillNext,"minutes");
+        var arrivalTime = moment(nextTrain).format("hh:mm");
     //--------------------------------------------------------------
 
 
-      // generate parts of new train data ....table elements
+      // generate parts of new train data ....new table row
       console.log(childSnapshot.val());
       var newTrTrain = $('<tr>');
       var newTdName = $('<td>').text(data.trainName);
       var newTdDest = $('<td>').text(data.trainDest);
       var newTdFreq = $('<td>').text(data.trainFreq);
-      var newTdNext = $('<td>').text(minTillNext);
-      var newTdMinToArr = $('<td>').text(arrivalTime);
+      var newTdNext = $('<td>').text(arrivalTime);
+      var newTdMinToArr = $('<td>').text(minTillNext);
 
-    // add table cells(<td> tags) to table row (<tr> tab)
-    newTrTrain.append(newTdName, newTdDest, newTdFreq, newTdNext, newTdMinToArr, );
+      // add table cells(<td> tags) to table row (<tr> tab)
+      newTrTrain.append(newTdName, newTdDest, newTdFreq, newTdNext, newTdMinToArr, );
     
-    // now Write html to page appending it to tbody tag
-    $('tbody').append(newTrTrain);
+      // now Write html to page appending it to tbody tag
+      $('tbody').append(newTrTrain);
 
     }
 
-    });
-
-    
-    
-    
-    //Next train time:
-    //convert first train time to min....add freq mins ....convert back to military = next
+  });

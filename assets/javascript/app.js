@@ -32,8 +32,11 @@
         trainFirstTime: first,
         trainFreq: freq
       });
+
       // clear form fields from screen
       $("form")[0].reset();
+
+      alert(name + " successfully added");
     }
   });
 
